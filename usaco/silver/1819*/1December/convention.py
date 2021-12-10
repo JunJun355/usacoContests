@@ -22,7 +22,6 @@ def main():
                 nm += 1
                 nf = arrivals[i]
                 nc = 1
-                # print(arrivals[i])
         # print(nm)
         if nm > m: return 0
         return 1
