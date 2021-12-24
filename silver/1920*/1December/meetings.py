@@ -1,15 +1,15 @@
 """
 ID: 06jajun
 LANG: PYTHON3
-TASK: test
+TASK: meetings
 """
 
 
 def main():
-    fin = open ('test.in', 'r')
-    fout = open ('test.out', 'w')
+    fin = open ('meetings.in', 'r')
+    fout = open ('meetings.out', 'w')
 
-
+    
 
     fout.write('\n')
     fout.close()

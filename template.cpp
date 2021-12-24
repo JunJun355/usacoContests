@@ -1,7 +1,7 @@
 /*
 ID: 06jajun
 TASK: test
-LANG: C++
+LANG: C++17
 */
 #include <iostream>
 #include <fstream>
@@ -13,7 +13,7 @@ int main() {
     ofstream fout ("test.out");
     ifstream fin ("test.in");
 
-    
+
 
     return 0;
 }
