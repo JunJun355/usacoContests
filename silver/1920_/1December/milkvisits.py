@@ -1,13 +1,13 @@
 """
 ID: 06jajun
 LANG: PYTHON3
-TASK: meetings
+TASK: milkvisits
 """
 
 
 def main():
-    fin = open ('meetings.in', 'r')
-    fout = open ('meetings.out', 'w')
+    fin = open ('milkvisits.in', 'r')
+    fout = open ('milkvisits.out', 'w')
 
     
 

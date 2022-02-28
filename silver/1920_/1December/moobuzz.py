@@ -18,5 +18,17 @@ def main():
     fout.close()
 
 
+def main1():
+    fin = open ('moobuzz.in', 'r')
+    fout = open ('moobuzz.out', 'w')
+
+    n = int(fin.readline()) - 1
+    list = [1, 2, 4, 7, 8, 11, 13, 14]
+    fout.write(str(n // 8 * 15 + list[n % 8]))
+
+    fout.write('\n')
+    fout.close()
+
+
 if __name__ == '__main__':
     main()
