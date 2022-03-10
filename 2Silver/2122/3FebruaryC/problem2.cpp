@@ -10,7 +10,7 @@ int m;
 unordered_map<long, vector<int>> all;
 vector<int> res;
 
-void recursea(int i, int x, int y, int k, int instructions[n][2]) {
+void recursea(int i, int x, int y, int k, int instructions[40][2]) {
   if (i == m) {
     long check = (px - x) * 1000000000 + py - y;
     all[check].push_back(k);
@@ -23,7 +23,7 @@ void recursea(int i, int x, int y, int k, int instructions[n][2]) {
   }
 }
 
-void recurseb(int i, int x, int y, int k, int instructions[n][2]) {
+void recurseb(int i, int x, int y, int k, int instructions[40][2]) {
   if (i == n) {
     long check = 1000000000 * x + y;
     for (auto j: all[check]) res[j + k] += 1;
@@ -39,7 +39,7 @@ void recurseb(int i, int x, int y, int k, int instructions[n][2]) {
 int main() {
   cin >> n >> px >> py;
   m = n / 2;
-  int instructions[n][2];
+  int instructions[40][2];
   for (int i=0; i<n; i++) {
     cin >> instructions[i][0] >> instructions[i][1];
   }
