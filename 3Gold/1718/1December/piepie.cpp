@@ -9,6 +9,8 @@ using namespace std;
 #define INF 1000000000
 #define FOR(i,b,t) for (int i=b; i<t; i++)
 
+// * ->
+
 int N,D;
 int A[2*MAXN];
 int B[2*MAXN];
