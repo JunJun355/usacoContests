@@ -8,67 +8,61 @@ LANG: C++17
 #include <algorithm>
 #include <vector>
 #include <fstream>
-#include <unordered_map>
+#include <unordered_set>
 #include <string>
 
 using namespace std;
 
-#define MXN 256
 #define INF 1000000000
 
 int m;
+int best = INF;
+bool digs[9];
+string nums;
 ifstream fin ("runround.in");
 ofstream fout ("runround.out");
 
-bool check(int x) {
-  string xs = to_string(x);
-  bool there[9];
-  int tot = 0;
-  for (int i=0; i < 9; i++) there[i] = true;
+bool check() {
   int curr = 0;
-  int currc = xs[0] - 48;
-  while (there[curr]) {
-    curr = (curr + currc) % xs.length();
-    currc = xs[curr] - 48;
-    tot++;
+  unordered_set<int> s;
+  int n = nums.size();
+  for (int i=0; i < n; i++) {
+    curr = (curr + nums[curr]-48) % n;
+    s.insert(curr);
   }
-  if (curr == 0 && tot == xs.length()) {
-    return true;
-  }
+  if (s.size() == n) return true;
   return false;
 }
 
-vector<int> roundnums(int x=0) {
-  vector<int> ret;
-  if (x > m) {
-    if (check(x))
-      ret.push_back(x);
-    return ret;
+void recurse() {
+  if (nums.size() == 0) {
+    for (int i=49; i < 58; i++) {
+      nums.push_back(i);
+      digs[i - 49] = true;
+      recurse();
+      digs[i - 49] = false;
+      nums.pop_back();
+    }
+    return;
   }
-  x = x * 10;
-  for (int i=1; i < 10; i++) {
-    x++;
-    for (auto r : roundnums(x)) ret.push_back(r);
+  int numi = stoi(nums);
+  if (numi > best) return;
+  if ((numi > m) && (check())) best = numi;
+
+  for (int i=49; i < 58; i++) {
+    if (digs[i - 49]) continue;
+    nums.push_back(i);
+    digs[i - 49] = true;
+    recurse();
+    digs[i - 49] = false;
+    nums.pop_back();
   }
-  return ret;
 }
 
 int main() {
   fin >> m;
-  vector<int> ans = roundnums();
-  sort(ans.begin(), ans.end());
-  int bot = 0, top = ans.size() - 1;
-  int end = top;
-  int middle;
-  while (bot <= top) {
-    middle = (bot + top) / 2;
-    if (ans[middle] < m) {
-      bot = middle + 1;
-    }
-    else if (ans[middle] >= m) {
-      end = middle;
-      top = middle - 1;
-    }
-  }
-  fout << ans[end] << endl;
+  for (int i=0; i < 9; i++) digs[i] = false;
+  recurse();
+  fout << best << endl;
+  return 0;
 }
