@@ -1,8 +1,10 @@
 /*
 ID: 06jajun
-TASK: atlarge
+TASK: taming
 LANG: C++17
 */
+
+// * ->
 
 #include <iostream>
 #include <algorithm>
@@ -14,10 +16,10 @@ using namespace std;
 #define MXN 100001
 #define INF 1000000000
 
-
 int main()
 {
-  ifstream fin ("atlarge.in");
-  ofstream fout ("atlarge.out");
+  ifstream fin ("taming.in");
+  ofstream fout ("taming.out");
+
 
 }
