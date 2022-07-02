@@ -10,11 +10,10 @@ LANG: C++17
 #include <fstream>
 #include <map>
 #include <string>
-#include <tuple>
 
 using namespace std;
 
-#define MXN 1e3+1
+#define MXN 200000
 #define INF 1e9
 
 struct Node {
@@ -22,49 +21,35 @@ struct Node {
   char letter;
 };
 
-struct State {
-  int i;
-  vector<int> path;
-};
-
-int m;
+int m, ans;
+bool dp[MXN];
 Node root;
 string code="";
-map<int, int> dfs_cache;
 vector<string> primitives;
 ifstream fin ("prefix.in");
 ofstream fout ("prefix.out");
 
-int non_recursive_dfs() {
-  vector<State> stack;
-  State start; start.i = 0;
-  stack.push_back(start);
-  while (!stack.empty()) {
-    State curr = stack.back(); stack.pop_back();
-    // for (int x : curr.path) cout << x << ' ';
-    // cout << endl;
-    if (dfs_cache.find(curr.i) != dfs_cache.end()) continue;
+int dpf() {
+  for (int i=0; i<m; i++) dp[i] = false;
+  dp[0] = true;
+  for (int i=0; i<m; i++) {
+    int j=0;
+    if (not dp[i]) continue;
+    // cout << i << endl;
     Node* tip = &root;
-    State ne;
-    ne.i = curr.i; ne.path = curr.path;
-    ne.path.push_back(curr.i);
-    while (tip->children.find(code[ne.i]) != tip->children.end()) {
-      tip = tip->children[code[ne.i]];
-      ne.i += 1;
-      if (tip->children.find('.') != tip->children.end()) {
-        stack.push_back(ne);
+    while (i+j < m && tip->children.find(code[i+j]) != tip->children.end()) {
+      // cout << i+j+1 << ' ';
+      if (tip->children[code[i+j]]->children.find('.') != tip->children[code[i+j]]->children.end()) {
+        dp[i+j+1] = true;
+        ans = max(ans, i+j+1);
+        // cout << "--";
       }
+      tip = tip->children[code[i+j]];
+      j++;
     }
-    if (tip->children.find('.') != tip->children.end()) {
-      stack.push_back(ne);
-    }
-    else {
-      for (vector<int>::iterator itr=ne.path.begin(); itr!=ne.path.end(); itr++) {
-        dfs_cache[*itr] = max(curr.i, dfs_cache[*itr]);
-      }
-    }
+    // cout << endl;
   }
-  return dfs_cache[0];
+  return ans;
 }
 
 int main() {
@@ -81,7 +66,7 @@ int main() {
     code += ne;
     fin >> ne;
   }
-  code += "-";
+  m = code.length();
 
   // Create trie
   root.letter = '.';
@@ -110,11 +95,6 @@ int main() {
     }
     tip->children['.'] = &root;
   }
-
-  // for (auto x: root.children) cout << x.first << ' ' ;
-  // cout << endl;
-
-  // dfs
-  fout << non_recursive_dfs() << endl;
+  fout << dpf() << endl;
   return 0;
 }
