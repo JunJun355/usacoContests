@@ -1,6 +1,6 @@
 /*
 ID: 06jajun
-TASK: preface
+TASK: template
 LANG: C++17
 */
 
@@ -13,11 +13,11 @@ LANG: C++17
 
 using namespace std;
 
-#define MXN 100;
-#define INF 1000000000;
+#define MXN 1e3+1;
+#define INF 1e9;
 
-ifstream fin ("preface.in");
-ofstream fout ("preface.out");
+ifstream fin ("template.in");
+ofstream fout ("template.out");
 
 int main() {
 

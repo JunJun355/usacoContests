@@ -1,17 +1,19 @@
 /*
 ID: 06jajun
-TASK: test
+TASK: template
 LANG: C++17
 */
 
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <unordered_map>
+#include <string>
 
 using namespace std;
 
-#define MXN 100001
-#define INF 1000000000
+#define MXN 1e3+1
+#define INF 2e9
 
 int main() {
 
