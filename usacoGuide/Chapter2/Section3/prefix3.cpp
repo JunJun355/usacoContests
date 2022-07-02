@@ -10,48 +10,61 @@ LANG: C++17
 #include <fstream>
 #include <map>
 #include <string>
+#include <tuple>
 
 using namespace std;
 
 #define MXN 1e3+1;
 #define INF 1e9;
 
+struct Node {
+  map<char, Node*> children;
+  char letter;
+};
+
+struct State {
+  int i;
+  vector<int> path;
+};
+
 int m;
+Node root;
 string code="";
 map<int, int> dfs_cache;
 vector<string> primitives;
 ifstream fin ("prefix.in");
 ofstream fout ("prefix.out");
 
-struct Node {
-  map<char, Node*> children;
-  char letter;
-
-};
-
-int dfs(int i, char le, Node* tip, int farthest=0) {
-  // cout << i << ' ' << le << ' ' << code[i + 1] << endl;
-  int ans = farthest;
-  // If the current tip is the root, indicates end of previous primitive and moving on to the next
-  // cout << 1 << endl;
-  if (tip->letter == '.') {
-    if (dfs_cache.find(i) != dfs_cache.end()) {
-      return dfs_cache[i];
+int non_recursive_dfs() {
+  vector<State> stack;
+  State start; start.i = 0;
+  stack.push_back(start);
+  while (!stack.empty()) {
+    State curr = stack.back(); stack.pop_back();
+    // for (int x : curr.path) cout << x << ' ';
+    // cout << endl;
+    if (dfs_cache.find(curr.i) != dfs_cache.end()) continue;
+    Node* tip = &root;
+    State ne;
+    ne.i = curr.i; ne.path = curr.path;
+    ne.path.push_back(curr.i);
+    while (tip->children.find(code[ne.i]) != tip->children.end()) {
+      tip = tip->children[code[ne.i]];
+      ne.i += 1;
+      if (tip->children.find('.') != tip->children.end()) {
+        stack.push_back(ne);
+      }
     }
-    ans = i;
-    if (tip->children.find(le) != tip->children.end()) {
-      ans = dfs(i + 1, code[i + 1], tip->children[le], ans);
+    if (tip->children.find('.') != tip->children.end()) {
+      stack.push_back(ne);
     }
-    dfs_cache[i] = ans;
-    return ans;
+    else {
+      for (vector<int>::iterator itr=ne.path.begin(); itr!=ne.path.end(); itr++) {
+        dfs_cache[*itr] = max(curr.i, dfs_cache[*itr]);
+      }
+    }
   }
-  if (tip->children.find('.') != tip->children.end()) {
-    ans = max(dfs(i, le, tip->children['.'], ans), ans);
-  }
-  if (tip->children.find(le) != tip->children.end()) {
-    ans = max(dfs(i + 1, code[i + 1], tip->children[le], ans), ans);
-  }
-  return ans;
+  return dfs_cache[0];
 }
 
 int main() {
@@ -71,10 +84,9 @@ int main() {
   code += "-";
 
   // Create trie
-  Node root;
   root.letter = '.';
   for (string primitive : primitives) {
-    Node *tip = &root;
+    Node* tip = &root;
     int i=0;
     // First letter of primitive
     char le = primitive[i];
@@ -99,10 +111,10 @@ int main() {
     tip->children['.'] = &root;
   }
 
+  // for (auto x: root.children) cout << x.first << ' ' ;
+  // cout << endl;
+
   // dfs
-  int i=0;
-  char le=code[i];
-  Node* tip = &root;
-  fout << dfs(i, le, tip) << endl;
+  fout << non_recursive_dfs() << endl;
   return 0;
 }
