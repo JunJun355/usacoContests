@@ -13,8 +13,8 @@ LANG: C++17
 
 using namespace std;
 
-#define MXN 1e3+1
-#define INF 1e9
+#define MXN 1000
+#define INF 1000000000
 
 ifstream fin ("template.in");
 ofstream fout ("template.out");
