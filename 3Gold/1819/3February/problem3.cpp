@@ -4,15 +4,18 @@ TASK: template
 LANG: C++17
 */
 
-#include <algorithm>
-#include <iostream>
-#include <fstream>
-#include <vector>
+//
+
 #include <set>
+#include <map>
+#include <vector>
+#include <fstream>
+#include <iostream>
+#include <algorithm>
 
 using namespace std;
 
-#define MXN 100000
+#define MXN 10000
 #define INF 1000000000
 
 ifstream fin ("template.in");
