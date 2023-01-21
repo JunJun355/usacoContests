@@ -10,13 +10,13 @@
 using namespace std;
 
 char board[6][7];
-int m = 0;
+int m = 19;
 int last_move = -1; // visual aid to see previous move when printing
 unordered_map<string, int> cache;
-string s[7] = {"", "", "", "", "", "", ""};
+string s[7] = {"", "ox", "ox", "xoxooo", "xxox", "xx", "o"};
 const int search_order[7] = {3, 2, 4, 1, 5, 0, 6};
-const bool ai_play = false;
-const int ai_turn = 1, max_depth = 10;
+const bool ai_play = true;
+const int ai_turn = 1, max_depth = 18;
 // int current[max_depth + 1], best[max_depth + 1];
 int tot = 0;
 
@@ -233,7 +233,7 @@ bool done(pair<int, int> move) {
 
     // check left-up diagonal
     tot = 0;
-    for (int i=max(-3, max(x - 5, -y)); i<min(4, min(x+1, 7-y)); i++) {
+    for (int i=max(-3, max(x - 5, -y)); i<min(4, min(x, 7-y)); i++) {
         if (board[x - i][y + i] != thing) tot = 0;
         else tot++;
         if (tot == 4) return true;
@@ -243,7 +243,7 @@ bool done(pair<int, int> move) {
 } // done
 
 bool make_move(int x, int& y) {
-    if (board[0][x] != '.' || 0 > x || x > 7) return false;
+    if (board[0][x] != '.') return false;
     for (y=0; y<5; y++) {
         if (board[y + 1][x] != '.') break;
     }
@@ -264,6 +264,7 @@ int search(pair<int, int> move, int d=1, int alpha=-INF, int beta=INF) {
         // printb();
         // tot++;
         eval = INF - d * 1000;
+        // if (move.first == 1 && eval == 999990000) printb();
     }
     else if (d == max_depth || m == 42) {
         eval = evaluation(move);
@@ -327,12 +328,15 @@ pair<int, int> get_move() {
         if (x == -1) return make_pair(-1, -1);
         if (make_move(x, y)) break;
         cout << "!Error" << endl;
-    } while (true);
+    } while (false);
     return make_pair(x, y);
 } // done
 
 void setup() {
-    memset(board, '.', sizeof(board));
+    string s = "...o......o......ox.....xo...xxoxx..ooxxxo";
+    for (int i=0; i<6; i++) for (int j=0; j<7; j++) {
+        board[i][j] = s[i * 7 + j];
+    }
     printb();
 } // done
 
