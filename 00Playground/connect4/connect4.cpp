@@ -15,8 +15,8 @@ int last_move = -1; // visual aid to see previous move when printing
 unordered_map<string, int> cache;
 string s[7] = {"", "", "", "", "", "", ""};
 const int search_order[7] = {3, 2, 4, 1, 5, 0, 6};
-const bool ai_play = false;
-const int ai_turn = 1, max_depth = 10;
+const bool ai_play = true;
+const int ai_turn = 1, max_depth = 9;
 // int current[max_depth + 1], best[max_depth + 1];
 int tot = 0;
 
@@ -225,7 +225,7 @@ bool done(pair<int, int> move) {
 
     // check left-down diagonal
     tot = 0;
-    for (int i=max(-3, max(-x, -y)); i<min(4, min(6-x, 7-y)); i++) {
+    for (int i=max(-3, max(-x, -y)); i<=min(3, min(5-x, 6-y)); i++) {
         if (board[x + i][y + i] != thing) tot = 0;
         else tot++;
         if (tot == 4) return true;
@@ -233,7 +233,7 @@ bool done(pair<int, int> move) {
 
     // check left-up diagonal
     tot = 0;
-    for (int i=max(-3, max(x - 5, -y)); i<min(4, min(x+1, 7-y)); i++) {
+    for (int i=max(-3, max(x - 5, -y)); i<=min(3, min(x, 6-y)); i++) {
         if (board[x - i][y + i] != thing) tot = 0;
         else tot++;
         if (tot == 4) return true;

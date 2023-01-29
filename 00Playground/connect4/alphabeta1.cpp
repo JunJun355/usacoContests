@@ -14,11 +14,14 @@ int m = 19;
 int last_move = -1; // visual aid to see previous move when printing
 unordered_map<string, int> cache;
 string s[7] = {"", "", "oxoo", "oxoxoo", "xoxoxx", "xo", "x"};
-// string s[7] = {"", "x", "ooxoo", "xoxooo", "xxox", "xx", "oxx"};
 const int search_order[7] = {3, 2, 4, 1, 5, 0, 6};
+// const int search_order[7] = {3, 6, 2, 4, 1, 5, 0};
 const bool ai_play = true;
-const int ai_turn = 1, max_depth = 18;
+const int ai_turn = 1, default_depth = 6;
+int max_depth = default_depth;
+int deez[5] = {6, 12, 15, 18, 0};
 // int current[max_depth + 1], best[max_depth + 1];
+// vector<int> searched;
 int tot = 0;
 
 void changeb(int x, int y, char t) {
@@ -258,14 +261,13 @@ int search(pair<int, int> move, int d=1, int alpha=-INF, int beta=INF) {
     // int x = move.first, y = move.second;
 
     string enc = encode();
-    if (cache.find(enc) != cache.end()) {
-        return cache[enc];
-    }
+    // if (cache.find(enc) != cache.end()) {
+    //     return cache[enc];
+    // }
     if (done(move)) {
         // printb();
         // tot++;
         eval = INF - d * 1000;
-        // if (move.first == 1 && eval == 999990000) printb();
     }
     else if (d == max_depth || m == 42) {
         eval = evaluation(move);
@@ -279,42 +281,69 @@ int search(pair<int, int> move, int d=1, int alpha=-INF, int beta=INF) {
             if (make_move(x, y)) {
                 changeb(x, y, (m % 2 == 0) ? 'x' : 'o');
                 m++;
+                // searched.push_back(x);
                 int curr = -search(make_pair(x, y), d + 1, -beta, -alpha);
                 // cout << curr << ' ';
+                // searched.pop_back();
                 changeb(x, y, '.');
                 m--;
+                // if (curr == -2) continue;
                 eval = min(eval, curr);
+                beta = min(beta, eval);
+                if (beta <= alpha) {
+                    // tot++;
+                    return eval;
+                }
                 // if (eval <= -INF/2) break;
             }
         }
         eval += evaluation(move);
     }
     cache[encode()] = eval;
+    // cout << d;
+    // for (int movei : searched) cout << ' ' << movei;
+    // cout << ' ' << alpha << ' ' << beta << ' ' << eval << endl;
     return eval;
 } // NOT NOT NOT done NOT NOT NOT
 
 int get_ai_move() {
-    tot = 0;
-    int scores[7]; for (int i=0; i<7; i++) scores[i] = -INF;
-    int choice, y;
-    for (choice = 0;;choice++) if (make_move(choice, y)) break;
-    for (int x : search_order) {
-        if (make_move(x, y)) {
-            changeb(x, y, (m % 2 == 0) ? 'x' : 'o');
-            m++;
-            scores[x] = search(make_pair(x, y));
-            // cout << scores[x] << ' ';
-            changeb(x, y, '.');
-            m--;
-            if (scores[choice] < scores[x]) choice = x;
+    // searched.clear();
+    int scores[7]; int choice, y;
+    vector<int> next_to_search = {3, 2, 4, 1, 5, 0, 6};
+    vector<int> to_search;
+    int dz = 0;
+    do {
+        dz++;
+        to_search = next_to_search;
+        tot = 0;
+        for (int i=0; i<7; i++) scores[i] = -INF;
+        for (choice = 0;;choice++) if (make_move(choice, y)) break;
+        for (int x : to_search) {
+            if (make_move(x, y)) {
+                changeb(x, y, (m % 2 == 0) ? 'x' : 'o');
+                // searched.push_back(x);
+                m++;
+                scores[x] = search(make_pair(x, y));
+                // cout << scores[x] << ' ';
+                // searched.pop_back();
+                changeb(x, y, '.');
+                m--;
+                if (scores[choice] < scores[x]) {
+                    choice = x;
+                    next_to_search.clear(); next_to_search.push_back(x);
+                }
+                else if (scores[choice] == scores[x]) next_to_search.push_back(x);
+            }
         }
-    }
-    for (int score : scores) cout << score << ' ';
-    cout << endl;
-    cout << choice << endl << endl;
-    // if (scores[choice] < -INF / 2) return -1;
-    cache.clear();
-    cout << tot << endl;
+        for (int score : scores) cout << score << ' ';
+        cout << endl;
+        // cout << choice << endl << endl;
+        // if (scores[choice] < -INF / 2) return -1;
+        cache.clear();
+        cout << tot << endl;
+        max_depth = deez[dz];
+    } while (tot < 500000 && dz < 4 && (abs(scores[next_to_search.front()]) < 10000 && next_to_search.size() != 1));
+    max_depth = default_depth;
     return choice;
 } // NOT NOT NOT done NOT NOT NOT
 
@@ -327,16 +356,15 @@ pair<int, int> get_move() {
             cin >> x; x--;
         }
         if (x == -1) return make_pair(-1, -1);
-        if (make_move(x, y)) break;
+        if (make_move(x, y) && 0 <= x && x <= 7) break;
         cout << "!Error" << endl;
-    } while (false);
+    } while (true);
     return make_pair(x, y);
 } // done
 
 void setup() {
-    cache.clear();
+    // memset(board, '.', sizeof(board));
     string s = "...ox.....ox....oxo....oox....xxoo...ooxxx";
-    // string s = "...o.....oo.....oox....xxo.x..ooxxx.xoxxxo";
     for (int i=0; i<6; i++) for (int j=0; j<7; j++) {
         board[i][j] = s[i * 7 + j];
     }
@@ -359,7 +387,7 @@ void game() {
         printb();
         m++;
     } while (!done(move) && m <= 42);
-    if (m == 42 && !done(move)) cout << "It's a draw!" << endl;
+    if (m == 42) cout << "It's a draw!" << endl;
     else cout << "Player " << ((m + 1) % 2 + 1) << " wins!" << endl;
     return ;
 } // done

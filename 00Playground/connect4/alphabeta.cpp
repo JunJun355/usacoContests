@@ -5,23 +5,25 @@
 #include <set>
 #include <unordered_map>
 
+#include <cstdlib>
+#include <time.h>
+
 #define INF 1000000000
 
 using namespace std;
 
-char board[6][7];
-int m = 0;
-int last_move = -1; // visual aid to see previous move when printing
-unordered_map<string, int> cache;
-string s[7] = {"", "", "", "", "", "", ""};
 const int search_order[7] = {3, 2, 4, 1, 5, 0, 6};
-// const int search_order[7] = {3, 6, 2, 4, 1, 5, 0};
+const int deez[6] = {6, 10, 12, 15, 18, 0};
+
 const bool ai_play = true;
 const int ai_turn = 1, default_depth = 6;
+
+char board[6][7];
+int m = 23;
+int last_move = -1; // visual aid to see previous move when printing
+unordered_map<string, int> cache;
+string s[7] = {"", "x", "ooxoo", "xoxooo", "xxox", "xx", "oxx"};
 int max_depth = default_depth;
-int deez[5] = {6, 12, 15, 18, 0};
-// int current[max_depth + 1], best[max_depth + 1];
-// vector<int> searched;
 int tot = 0;
 
 void changeb(int x, int y, char t) {
@@ -53,6 +55,14 @@ void printb() {
     }
     cout << endl;
     // for (string t : s) cout << t << endl;
+} // done
+
+bool make_move(int x, int& y) {
+    if (board[0][x] != '.') return false;
+    for (y=0; y<5; y++) {
+        if (board[y + 1][x] != '.') break;
+    }
+    return true;
 } // done
 
 int evaluation(pair<int, int> move) {
@@ -246,14 +256,6 @@ bool done(pair<int, int> move) {
     return false;
 } // done
 
-bool make_move(int x, int& y) {
-    if (board[0][x] != '.') return false;
-    for (y=0; y<5; y++) {
-        if (board[y + 1][x] != '.') break;
-    }
-    return true;
-} // done
-
 int search(pair<int, int> move, int d=1, int alpha=-INF, int beta=INF) {
     tot++;
     // printb();
@@ -268,6 +270,7 @@ int search(pair<int, int> move, int d=1, int alpha=-INF, int beta=INF) {
         // printb();
         // tot++;
         eval = INF - d * 1000;
+        // eval *= -1;
     }
     else if (d == max_depth || m == 42) {
         eval = evaluation(move);
@@ -287,12 +290,15 @@ int search(pair<int, int> move, int d=1, int alpha=-INF, int beta=INF) {
                 // searched.pop_back();
                 changeb(x, y, '.');
                 m--;
-                eval = min(eval, curr);
+                // eval = min(eval, curr);
                 beta = min(beta, eval);
-                if (beta <= alpha) {
+                if (curr <= alpha) {
                     // tot++;
-                    break;
+                    return alpha;
                 }
+                eval = min(eval, curr);
+                // if (curr >= beta) return beta;
+                // if (curr > alpha) alpha = curr;
                 // if (eval <= -INF/2) break;
             }
         }
@@ -334,15 +340,26 @@ int get_ai_move() {
                 else if (scores[choice] == scores[x]) next_to_search.push_back(x);
             }
         }
-        for (int score : scores) cout << score << ' ';
-        cout << endl;
+        // for (int score : scores) cout << score << ' ';
+        // cout << endl;
         // cout << choice << endl << endl;
         // if (scores[choice] < -INF / 2) return -1;
         cache.clear();
-        cout << tot << endl;
+        // cout << tot << endl;
         max_depth = deez[dz];
-    } while (tot < 500000 && dz < 4 && (abs(scores[next_to_search.front()]) < 10000 && next_to_search.size() != 1));
+    } while (false); //while (tot < 500000 && dz < 5 && (abs(scores[next_to_search.front()]) < 10000 && next_to_search.size() != 1));
     max_depth = default_depth;
+
+    cout << dz << endl;
+    for (int score : scores) cout << score << ' ';
+    cout << endl;
+
+    return choice;
+
+    // randomize a little
+    int f1 = rand() % 20; int f2 = f1 < 13 ? 0 : (f1 < 17 ? 1 : 2); int f3 = f2 < next_to_search.size() ? f2 : 0;
+    return next_to_search[f3];
+
     return choice;
 } // NOT NOT NOT done NOT NOT NOT
 
@@ -362,7 +379,11 @@ pair<int, int> get_move() {
 } // done
 
 void setup() {
-    memset(board, '.', sizeof(board));
+    string s = "...o.....oo.....oox....xxo.x..ooxxx.xoxxxo";
+    for (int i=0; i<6; i++) for (int j=0; j<7; j++) {
+        board[i][j] = s[i * 7 + j];
+    }
+    srand(time(0));
     printb();
 } // done
 
@@ -381,8 +402,8 @@ void game() {
         cout << evaluation(move) << endl;
         printb();
         m++;
-    } while (!done(move) && m <= 42);
-    if (m == 42) cout << "It's a draw!" << endl;
+    } while (!done(move) && m < 42);
+    if (m == 42 && !done(move)) cout << "It's a draw!" << endl;
     else cout << "Player " << ((m + 1) % 2 + 1) << " wins!" << endl;
     return ;
 } // done
