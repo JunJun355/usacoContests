@@ -10,18 +10,15 @@
 using namespace std;
 
 char board[6][7];
-int m = 19;
+int m = 0;
 int last_move = -1; // visual aid to see previous move when printing
 unordered_map<string, int> cache;
-string s[7] = {"", "", "oxoo", "oxoxoo", "xoxoxx", "xo", "x"};
+string s[7] = {"", "", "", "", "", "", ""};
 const int search_order[7] = {3, 2, 4, 1, 5, 0, 6};
-// const int search_order[7] = {3, 6, 2, 4, 1, 5, 0};
 const bool ai_play = true;
-const int ai_turn = 1, default_depth = 6;
+const int ai_turn = 0, default_depth = 6;
 int max_depth = default_depth;
 int deez[5] = {6, 12, 15, 18, 0};
-// int current[max_depth + 1], best[max_depth + 1];
-// vector<int> searched;
 int tot = 0;
 
 void changeb(int x, int y, char t) {
@@ -30,8 +27,8 @@ void changeb(int x, int y, char t) {
     else s[x] += t;
 }
 
-string encode() {
-    return s[0]+"/"+s[1]+"/"+s[2]+"/"+s[3]+"/"+s[4]+"/"+s[5]+"/"+s[6];
+string encode(int alpha, int beta) {
+    return s[0]+"/"+s[1]+"/"+s[2]+"/"+s[3]+"/"+s[4]+"/"+s[5]+"/"+s[6]+"/"+to_string(alpha)+"/"+to_string(beta);
 }
 
 void printb() {
@@ -256,14 +253,12 @@ bool make_move(int x, int& y) {
 
 int search(pair<int, int> move, int d=1, int alpha=-INF, int beta=INF) {
     tot++;
-    // printb();
     int eval = INF;
-    // int x = move.first, y = move.second;
 
-    string enc = encode();
-    // if (cache.find(enc) != cache.end()) {
-    //     return cache[enc];
-    // }
+    string enc = encode(alpha, beta);
+    if (cache.find(enc) != cache.end()) {
+        return cache[enc];
+    }
     if (done(move)) {
         // printb();
         // tot++;
@@ -299,7 +294,7 @@ int search(pair<int, int> move, int d=1, int alpha=-INF, int beta=INF) {
         }
         eval += evaluation(move);
     }
-    cache[encode()] = eval;
+    cache[encode(alpha, beta)] = eval;
     // cout << d;
     // for (int movei : searched) cout << ' ' << movei;
     // cout << ' ' << alpha << ' ' << beta << ' ' << eval << endl;
@@ -363,11 +358,11 @@ pair<int, int> get_move() {
 } // done
 
 void setup() {
-    // memset(board, '.', sizeof(board));
-    string s = "...ox.....ox....oxo....oox....xxoo...ooxxx";
-    for (int i=0; i<6; i++) for (int j=0; j<7; j++) {
-        board[i][j] = s[i * 7 + j];
-    }
+    memset(board, '.', sizeof(board));
+    // string s = "...ox.....ox....oxo....oox....xxoo...ooxxx";
+    // for (int i=0; i<6; i++) for (int j=0; j<7; j++) {
+    //     board[i][j] = s[i * 7 + j];
+    // }
     printb();
 } // done
 

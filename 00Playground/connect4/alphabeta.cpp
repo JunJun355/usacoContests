@@ -19,10 +19,11 @@ const bool ai_play = true;
 const int ai_turn = 1, default_depth = 6;
 
 char board[6][7];
-int m = 23;
+int m = 0;
 int last_move = -1; // visual aid to see previous move when printing
 unordered_map<string, int> cache;
-string s[7] = {"", "x", "ooxoo", "xoxooo", "xxox", "xx", "oxx"};
+string s[7] = {"", "", "", "", "", "", ""};
+// string s[7] = {"", "x", "ooxoo", "xoxooo", "xxox", "xx", "oxx"};
 int max_depth = default_depth;
 int tot = 0;
 
@@ -379,11 +380,12 @@ pair<int, int> get_move() {
 } // done
 
 void setup() {
-    string s = "...o.....oo.....oox....xxo.x..ooxxx.xoxxxo";
-    for (int i=0; i<6; i++) for (int j=0; j<7; j++) {
-        board[i][j] = s[i * 7 + j];
-    }
-    srand(time(0));
+    memset(board, '.', sizeof(board));
+    // string s = "...o.....oo.....oox....xxo.x..ooxxx.xoxxxo";
+    // for (int i=0; i<6; i++) for (int j=0; j<7; j++) {
+    //     board[i][j] = s[i * 7 + j];
+    // }
+    // srand(time(0));
     printb();
 } // done
 
