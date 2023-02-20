@@ -6,18 +6,23 @@ LANG: C++17
 
 #include <algorithm>
 #include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
 #include <fstream>
+#include <string>
 #include <vector>
 #include <set>
 #include <map>
 
 using namespace std;
 
-#define MXN 100000
-#define INF 1000000000
+const string NAME = "template";
 
-ifstream fin ("template.in");
-ofstream fout ("template.out");
+const int MXN = 1e6;
+const int INF = 1e9;
+
+ifstream fin (NAME + ".in");
+ofstream fout (NAME + ".out");
 
 int main() {
 
