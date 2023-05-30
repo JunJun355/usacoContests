@@ -8,6 +8,11 @@
         "iostream": "cpp",
         "fstream": "cpp",
         "vector": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "ostream": "cpp",
+        "filesystem": "cpp",
+        "stack": "cpp",
+        "chrono": "cpp",
+        "variant": "cpp"
     }
 }
