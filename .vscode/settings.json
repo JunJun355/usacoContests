@@ -13,6 +13,10 @@
         "filesystem": "cpp",
         "stack": "cpp",
         "chrono": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "__bit_reference": "cpp",
+        "bitset": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp"
     }
 }
